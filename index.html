@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Life Tracker 2025</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav class="nav">
+  <span class="nav-tab active" onclick="goToView(0)">☀️ Today</span>
+  <span class="nav-tab" onclick="goToView(1)">📅 Week</span>
+  <span class="nav-tab" onclick="goToView(2)">📊 Dashboard</span>
+  <span class="nav-tab" onclick="goToView(3)">🗓️ Month</span>
+  <span class="nav-tab" onclick="goToView(4)">🔍 Drill Down</span>
+  <span class="nav-tab" onclick="goToView(5)">📈 Trends</span>
+</nav>
+
+<!-- VIEW 0: TODAY (Combined) -->
+<div class="view active" id="v0">
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+      <button onclick="changeViewDate(-1)" style="background:#2a2a3a;border:none;color:#aaa;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:14px">←</button>
+      <div class="sub-text" id="dateToday" style="flex:1;text-align:center;margin:0"></div>
+      <button onclick="changeViewDate(1)" style="background:#2a2a3a;border:none;color:#aaa;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:14px">→</button>
+      <button id="goTodayBtn" onclick="goToToday()" style="background:#7c6ff7;border:none;color:#fff;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px;display:none">Today</button>
+    </div>
+    <div class="page-title"><span id="greetingText">Good morning</span>, <em id="userName"></em> 👋</div>
+    <div class="ring-container">
+      <svg width="80" height="80" viewBox="0 0 100 100">
+        <circle class="ring-bg" cx="50" cy="50" r="40"/>
+        <circle class="ring-fg" id="ring-today" cx="50" cy="50" r="40" stroke-dasharray="251" stroke-dashoffset="251"/>
+        <text class="ring-text" id="pct-today" x="50" y="50">0%</text>
+      </svg>
+      <div class="ring-info">
+        <b id="count-today">0 of 0 done</b>
+        <small id="msg-today">Let's get started!</small>
+      </div>
+    </div>
+    <div style="margin-bottom:16px">
+      <button id="modeToggle" onclick="toggleMode()" style="background:#2a2a3a;border:none;color:#aaa;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:12px">📋 Switch to Time Blocks</button>
+    </div>
+    <div id="todayList"></div>
+  </div>
+</div>
+
+<!-- VIEW 2: WEEK -->
+<div class="view" id="v1">
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+  <button onclick="changeWeek(-1)" style="background:#2a2a3a;border:none;color:#aaa;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:14px">←</button>
+  <div style="flex:1">
+    <div class="section-title" style="margin:0">This Week</div>
+    <div class="sub-text" id="weekRange" style="margin:0"></div>
+  </div>
+  <button onclick="changeWeek(1)" style="background:#2a2a3a;border:none;color:#aaa;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:14px">→</button>
+  <button onclick="goToCurrentWeek()" style="background:#7c6ff7;border:none;color:#fff;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px">This Week</button>
+</div>
+    <div id="weekGrid" style="margin-top:12px"></div>
+    <div class="week-progress-wrap">
+      <span>Week completion</span>
+      <span style="color:var(--accent);font-weight:600" id="weekPct">0%</span>
+    </div>
+    <div class="week-progress-bar">
+      <div class="week-progress-fill" id="weekBar" style="width:0%"></div>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW 3: DASHBOARD -->
+<div class="view" id="v2">
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-val" style="color:var(--accent)" id="dYr">0%</div>
+      <div class="stat-label">Year Total</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:var(--green)" id="dMo">0%</div>
+      <div class="stat-label">This Month</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:var(--orange)" id="dSt">0</div>
+      <div class="stat-label">Best Streak</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:var(--blue)" id="dHab">0</div>
+      <div class="stat-label">Habits</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-title">Monthly Completion</div>
+    <div id="moChart"></div>
+  </div>
+  <div class="card">
+    <div class="section-title">By Category</div>
+    <div id="catBars"></div>
+  </div>
+  <div class="card">
+    <div class="section-title">Year Heatmap</div>
+    <div class="heatmap" id="heatmap"></div>
+    <div class="heatmap-legend">
+      <span>Less</span>
+      <div style="background:#1e1e2a"></div>
+      <div class="hm-1"></div>
+      <div class="hm-2"></div>
+      <div class="hm-3"></div>
+      <div class="hm-4"></div>
+      <div class="hm-5"></div>
+      <span>More</span>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW 4: MONTH -->
+<div class="view" id="v3">
+  <div class="card">
+    <div class="month-nav">
+      <button onclick="chMo(-1)">←</button>
+      <h3 id="moTitle"></h3>
+      <button onclick="chMo(1)">→</button>
+      <div class="month-pct">Monthly: <span style="color:var(--accent)" id="moPct">0%</span></div>
+    </div>
+    <div class="month-grid" id="moCal"></div>
+  </div>
+</div>
+
+<!-- VIEW 5: DRILL DOWN -->
+<div class="view" id="v4">
+  <div class="page-title">🔍 Category <em>Drill Down</em></div>
+  <div id="drillList"></div>
+</div>
+
+<!-- VIEW 6: TRENDS -->
+<div class="view" id="v5">
+  <div class="page-title">📈 Weekly <em>Trends</em></div>
+  <div class="trend-grid" id="trendGrid"></div>
+</div>
+
+<!-- SCRIPTS -->
+<script src="data.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>

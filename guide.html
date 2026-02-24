@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Tracker — Customization Guide</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,sans-serif;background:#0f0f13;color:#e0e0e0;line-height:1.7;padding:20px}
+.wrap{max-width:800px;margin:0 auto}
+h1{font-size:28px;font-weight:700;margin-bottom:8px}
+h1 em{color:#7c6ff7;font-style:normal}
+h2{font-size:20px;font-weight:700;margin:40px 0 12px;padding-top:20px;border-top:1px solid #2a2a3a;color:#7c6ff7}
+h3{font-size:16px;font-weight:600;margin:24px 0 8px;color:#f0a040}
+p{font-size:14px;color:#aaa;margin-bottom:12px}
+strong{color:#e0e0e0}
+code{background:#1a1a24;padding:2px 6px;border-radius:4px;font-size:13px;color:#7c6ff7;font-family:'Courier New',monospace}
+pre{background:#1a1a24;border:1px solid #2a2a3a;border-radius:10px;padding:16px;margin:12px 0 20px;overflow-x:auto;font-size:13px;line-height:1.6;color:#e0e0e0;font-family:'Courier New',monospace}
+.comment{color:#555}
+.keyword{color:#7c6ff7}
+.string{color:#4ecb71}
+.number{color:#f0a040}
+.key{color:#4ea4cb}
+table{width:100%;border-collapse:collapse;margin:12px 0 20px}
+th{text-align:left;padding:8px 12px;background:#1a1a24;border:1px solid #2a2a3a;font-size:12px;color:#7c6ff7;text-transform:uppercase;letter-spacing:0.5px}
+td{padding:8px 12px;border:1px solid #2a2a3a;font-size:13px;color:#ccc}
+tr:hover td{background:#1a1a24}
+.card{background:#1a1a24;border:1px solid #2a2a3a;border-radius:12px;padding:16px;margin:12px 0 20px}
+.tip{background:rgba(124,111,247,0.08);border-left:3px solid #7c6ff7;padding:12px 16px;border-radius:0 8px 8px 0;margin:12px 0;font-size:13px}
+.warn{background:rgba(240,80,80,0.08);border-left:3px solid #f05050;padding:12px 16px;border-radius:0 8px 8px 0;margin:12px 0;font-size:13px}
+.success{background:rgba(78,203,113,0.08);border-left:3px solid #4ecb71;padding:12px 16px;border-radius:0 8px 8px 0;margin:12px 0;font-size:13px}
+.badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;margin-right:4px}
+.badge-easy{background:rgba(78,203,113,0.15);color:#4ecb71}
+.badge-medium{background:rgba(240,160,64,0.15);color:#f0a040}
+a{color:#7c6ff7;text-decoration:none}
+a:hover{text-decoration:underline}
+.toc{background:#1a1a24;border:1px solid #2a2a3a;border-radius:12px;padding:16px 20px;margin:20px 0 30px}
+.toc a{display:block;padding:4px 0;font-size:13px;color:#aaa}
+.toc a:hover{color:#7c6ff7}
+.toc b{font-size:14px;color:#e0e0e0;display:block;margin-bottom:8px}
+.file-structure{background:#1a1a24;border:1px solid #2a2a3a;border-radius:12px;padding:16px;margin:12px 0;font-family:'Courier New',monospace;font-size:13px;color:#aaa;line-height:2}
+.file-structure em{color:#7c6ff7;font-style:normal}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;vertical-align:middle;margin-right:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>🎯 Life Tracker — <em>Customization Guide</em></h1>
+<p>Everything you need to know to make this tracker yours. You only ever edit <strong>one file: <code>data.js</code></strong></p>
+
+<div class="toc">
+<b>📖 Table of Contents</b>
+<a href="#structure">1. File Structure</a>
+<a href="#overview">2. data.js Overview</a>
+<a href="#settings">3. Change Settings</a>
+<a href="#categories">4. Add / Edit / Remove Categories</a>
+<a href="#timeblocks">5. Add / Edit / Remove Time Blocks</a>
+<a href="#habits">6. Add / Edit / Remove Habits</a>
+<a href="#weekly">7. Daily vs Weekly Habits</a>
+<a href="#examples">8. Real Examples</a>
+<a href="#backup">9. Backup & Restore Data</a>
+<a href="#deploy">10. Deploy to GitHub Pages</a>
+<a href="#troubleshoot">11. Troubleshooting</a>
+</div>
+
+<!-- ============================================= -->
+<h2 id="structure">1. File Structure</h2>
+
+<div class="file-structure">
+life-tracker/<br>
+├── <em>index.html</em> &nbsp; → Page shell (don't edit unless changing layout)<br>
+├── <em>style.css</em> &nbsp;&nbsp; → Styling (don't edit unless changing colors/fonts)<br>
+├── <em>app.js</em> &nbsp;&nbsp;&nbsp;&nbsp; → Engine (don't edit unless adding features)<br>
+├── <em>data.js</em> &nbsp;&nbsp;&nbsp; → ⭐ YOUR DATA — edit this to customize<br>
+├── <em>guide.html</em> &nbsp; → This guide<br>
+└── <em>README.md</em> &nbsp;&nbsp; → GitHub documentation
+</div>
+
+<div class="success">✅ <strong>Golden rule:</strong> Only edit <code>data.js</code>. Everything else auto-updates.</div>
+
+<!-- ============================================= -->
+<h2 id="overview">2. data.js Overview</h2>
+
+<p>The entire file is one object called <code>CONFIG</code> with 4 sections:</p>
+
+<pre>
+<span class="keyword">const</span> CONFIG = {
+  <span class="comment">// Section 1: Settings</span>
+  <span class="key">name</span>: <span class="string">"Champion"</span>,
+  <span class="key">year</span>: <span class="number">2025</span>,
+  <span class="key">weeklyReviewDay</span>: <span class="number">0</span>,
+
+  <span class="comment">// Section 2: Time Blocks</span>
+  <span class="key">timeBlocks</span>: [ ... ],
+
+  <span class="comment">// Section 3: Categories</span>
+  <span class="key">categories</span>: [ ... ],
+
+  <span class="comment">// Section 4: Habits</span>
+  <span class="key">habits</span>: [ ... ]
+};
+</pre>
+
+<!-- ============================================= -->
+<h2 id="settings">3. Change Settings</h2>
+<span class="badge badge-easy">EASY</span>
+
+<table>
+<tr><th>Setting</th><th>What it does</th><th>Example</th></tr>
+<tr><td><code>name</code></td><td>Your name shown in greeting</td><td><code>"Alex"</code></td></tr>
+<tr><td><code>year</code></td><td>Tracking year</td><td><code>2025</code></td></tr>
+<tr><td><code>weeklyReviewDay</code></td><td>Day weekly habits appear</td><td><code>0</code> = Sunday</td></tr>
+</table>
+
+<h3>Day Numbers</h3>
+<table>
+<tr><th>Number</th><th>Day</th></tr>
+<tr><td><code>0</code></td><td>Sunday</td></tr>
+<tr><td><code>1</code></td><td>Monday</td></tr>
+<tr><td><code>2</code></td><td>Tuesday</td></tr>
+<tr><td><code>3</code></td><td>Wednesday</td></tr>
+<tr><td><code>4</code></td><td>Thursday</td></tr>
+<tr><td><code>5</code></td><td>Friday</td></tr>
+<tr><td><code>6</code></td><td>Saturday</td></tr>
+</table>
+
+<h3>Example</h3>
+<pre>
+<span class="key">name</span>: <span class="string">"Sarah"</span>,
+<span class="key">year</span>: <span class="number">2025</span>,
+<span class="key">weeklyReviewDay</span>: <span class="number">1</span>, <span class="comment">// Weekly habits show on Monday</span>
+</pre>
+
+<!-- ============================================= -->
+<h2 id="categories">4. Add / Edit / Remove Categories</h2>
+<span class="badge badge-easy">EASY</span>
+
+<p>Categories are the colored groups your habits belong to. Each category has 3 properties:</p>
+
+<table>
+<tr><th>Property</th><th>What it does</th><th>Example</th></tr>
+<tr><td><code>name</code></td><td>Display name</td><td><code>"Health"</code></td></tr>
+<tr><td><code>color</code></td><td>Hex color code</td><td><code>"#4ecb71"</code></td></tr>
+<tr><td><code>icon</code></td><td>Emoji icon</td><td><code>"🏃"</code></td></tr>
+</table>
+
+<h3>Current Categories</h3>
+<pre>
+<span class="key">categories</span>: [
+  { <span class="key">name</span>: <span class="string">"Financial"</span>,        <span class="key">color</span>: <span class="string">"#f0a040"</span>, <span class="key">icon</span>: <span class="string">"💰"</span> }, <span class="comment">// index 0</span>
+  { <span class="key">name</span>: <span class="string">"Career"</span>,           <span class="key">color</span>: <span class="string">"#e06040"</span>, <span class="key">icon</span>: <span class="string">"💼"</span> }, <span class="comment">// index 1</span>
+  { <span class="key">name</span>: <span class="string">"IT & Cyber"</span>,       <span class="key">color</span>: <span class="string">"#40b0e0"</span>, <span class="key">icon</span>: <span class="string">"💻"</span> }, <span class="comment">// index 2</span>
+  { <span class="key">name</span>: <span class="string">"Health"</span>,           <span class="key">color</span>: <span class="string">"#4ecb71"</span>, <span class="key">icon</span>: <span class="string">"🏃"</span> }, <span class="comment">// index 3</span>
+  { <span class="key">name</span>: <span class="string">"Self Development"</span>, <span class="key">color</span>: <span class="string">"#7c6ff7"</span>, <span class="key">icon</span>: <span class="string">"📚"</span> }, <span class="comment">// index 4</span>
+  { <span class="key">name</span>: <span class="string">"Family"</span>,           <span class="key">color</span>: <span class="string">"#e07090"</span>, <span class="key">icon</span>: <span class="string">"👨‍👩‍👧"</span> }, <span class="comment">// index 5</span>
+  { <span class="key">name</span>: <span class="string">"Spirituality"</span>,     <span class="key">color</span>: <span class="string">"#c090f0"</span>, <span class="key">icon</span>: <span class="string">"🧘"</span> }, <span class="comment">// index 6</span>
+]
+</pre>
+
+<h3>Add a New Category</h3>
+<p>Add a new line at the end of the array:</p>
+<pre>
+  { <span class="key">name</span>: <span class="string">"Spirituality"</span>, <span class="key">color</span>: <span class="string">"#c090f0"</span>, <span class="key">icon</span>: <span class="string">"🧘"</span> }, <span class="comment">// index 6</span>
+  { <span class="key">name</span>: <span class="string">"Relationships"</span>, <span class="key">color</span>: <span class="string">"#ff6b9d"</span>, <span class="key">icon</span>: <span class="string">"❤️"</span> }, <span class="comment">// index 7 ← NEW</span>
+]
+</pre>
+
+<h3>Remove a Category</h3>
+<div class="warn">⚠️ <strong>Important:</strong> When you remove a category, you must also remove all habits that use its index, AND update the <code>cat</code> numbers for any habits that came after it.</div>
+
+<p>Example: If you remove <code>"Career"</code> (index 1), then:</p>
+<pre>
+<span class="comment">// BEFORE: Career was index 1</span>
+<span class="comment">// IT & Cyber was index 2, Health was index 3, etc.</span>
+
+<span class="comment">// AFTER removing Career:</span>
+<span class="comment">// IT & Cyber becomes index 1</span>
+<span class="comment">// Health becomes index 2</span>
+<span class="comment">// All habits using cat: 2 must change to cat: 1</span>
+<span class="comment">// All habits using cat: 3 must change to cat: 2</span>
+<span class="comment">// ...and so on</span>
+</pre>
+
+<div class="tip">💡 <strong>Tip:</strong> Easier approach — just rename the category instead of deleting it.</div>
+
+<h3>Popular Color Codes</h3>
+<table>
+<tr><th>Color</th><th>Code</th><th>Preview</th></tr>
+<tr><td>Red</td><td><code>#f05050</code></td><td><span class="dot" style="background:#f05050"></span></td></tr>
+<tr><td>Orange</td><td><code>#f0a040</code></td><td><span class="dot" style="background:#f0a040"></span></td></tr>
+<tr><td>Yellow</td><td><code>#e0c040</code></td><td><span class="dot" style="background:#e0c040"></span></td></tr>
+<tr><td>Green</td><td><code>#4ecb71</code></td><td><span class="dot" style="background:#4ecb71"></span></td></tr>
+<tr><td>Teal</td><td><code>#40c0a0</code></td><td><span class="dot" style="background:#40c0a0"></span></td></tr>
+<tr><td>Blue</td><td><code>#4ea4cb</code></td><td><span class="dot" style="background:#4ea4cb"></span></td></tr>
+<tr><td>Light Blue</td><td><code>#40b0e0</code></td><td><span class="dot" style="background:#40b0e0"></span></td></tr>
+<tr><td>Purple</td><td><code>#7c6ff7</code></td><td><span class="dot" style="background:#7c6ff7"></span></td></tr>
+<tr><td>Lavender</td><td><code>#c090f0</code></td><td><span class="dot" style="background:#c090f0"></span></td></tr>
+<tr><td>Pink</td><td><code>#e07090</code></td><td><span class="dot" style="background:#e07090"></span></td></tr>
+<tr><td>Rose</td><td><code>#ff6b9d</code></td><td><span class="dot" style="background:#ff6b9d"></span></td></tr>
+<tr><td>Coral</td><td><code>#e06040</code></td><td><span class="dot" style="background:#e06040"></span></td></tr>
+</table>
+
+<!-- ============================================= -->
+<h2 id="timeblocks">5. Add / Edit / Remove Time Blocks</h2>
+<span class="badge badge-easy">EASY</span>
+
+<p>Time blocks organize your <strong>Time Blocks view</strong> — when to do each habit during the day.</p>
+
+<table>
+<tr><th>Property</th><th>What it does</th><th>Example</th></tr>
+<tr><td><code>name</code></td><td>Block name</td><td><code>"Morning Ritual"</code></td></tr>
+<tr><td><code>icon</code></td><td>Emoji</td><td><code>"☀️"</code></td></tr>
+<tr><td><code>range</code></td><td>Time range (display only)</td><td><code>"5:30 – 8:30 AM"</code></td></tr>
+</table>
+
+<h3>Current Time Blocks</h3>
+<pre>
+<span class="key">timeBlocks</span>: [
+  { <span class="key">name</span>: <span class="string">"Morning Ritual"</span>, <span class="key">icon</span>: <span class="string">"☀️"</span>, <span class="key">range</span>: <span class="string">"5:30 – 8:30 AM"</span> },   <span class="comment">// index 0</span>
+  { <span class="key">name</span>: <span class="string">"Focus Block"</span>,    <span class="key">icon</span>: <span class="string">"⚡"</span>, <span class="key">range</span>: <span class="string">"8:30 AM – 12:30 PM"</span> }, <span class="comment">// index 1</span>
+  { <span class="key">name</span>: <span class="string">"Afternoon"</span>,      <span class="key">icon</span>: <span class="string">"🌤️"</span>, <span class="key">range</span>: <span class="string">"12:30 – 6:00 PM"</span> },   <span class="comment">// index 2</span>
+  { <span class="key">name</span>: <span class="string">"Evening"</span>,        <span class="key">icon</span>: <span class="string">"🌅"</span>, <span class="key">range</span>: <span class="string">"6:00 – 9:00 PM"</span> },    <span class="comment">// index 3</span>
+  { <span class="key">name</span>: <span class="string">"Wind Down"</span>,      <span class="key">icon</span>: <span class="string">"🌙"</span>, <span class="key">range</span>: <span class="string">"9:00 – 11:00 PM"</span> },   <span class="comment">// index 4</span>
+]
+</pre>
+
+<h3>Add a New Time Block</h3>
+<pre>
+  { <span class="key">name</span>: <span class="string">"Wind Down"</span>,   <span class="key">icon</span>: <span class="string">"🌙"</span>, <span class="key">range</span>: <span class="string">"9:00 – 11:00 PM"</span> },  <span class="comment">// index 4</span>
+  { <span class="key">name</span>: <span class="string">"Lunch Break"</span>, <span class="key">icon</span>: <span class="string">"🍽️"</span>, <span class="key">range</span>: <span class="string">"12:00 – 1:00 PM"</span> }, <span class="comment">// index 5 ← NEW</span>
+]
+</pre>
+
+<div class="tip">💡 <strong>Same rule as categories:</strong> removing a time block means updating <code>time</code> indexes in your habits.</div>
+
+<!-- ============================================= -->
+<h2 id="habits">6. Add / Edit / Remove Habits</h2>
+<span class="badge badge-easy">EASY</span>
+
+<p>Each habit has these properties:</p>
+
+<table>
+<tr><th>Property</th><th>Required</th><th>What it does</th><th>Example</th></tr>
+<tr><td><code>name</code></td><td>✅ Yes</td><td>Habit name shown everywhere</td><td><code>"Read 30 min"</code></td></tr>
+<tr><td><code>cat</code></td><td>✅ Yes</td><td>Category index number</td><td><code>3</code> = Health</td></tr>
+<tr><td><code>time</code></td><td>✅ Yes</td><td>Time block index number</td><td><code>0</code> = Morning</td></tr>
+<tr><td><code>est</code></td><td>✅ Yes</td><td>Estimated time</td><td><code>"15m"</code> or <code>"—"</code></td></tr>
+<tr><td><code>weekly</code></td><td>❌ No</td><td>Only show on review day</td><td><code>true</code></td></tr>
+</table>
+
+<h3>Category Index Reference</h3>
+<table>
+<tr><th>Index</th><th>Category</th></tr>
+<tr><td><code>0</code></td><td><span class="dot" style="background:#f0a040"></span> 💰 Financial</td></tr>
+<tr><td><code>1</code></td><td><span class="dot" style="background:#e06040"></span> 💼 Career</td></tr>
+<tr><td><code>2</code></td><td><span class="dot" style="background:#40b0e0"></span> 💻 IT & Cyber</td></tr>
+<tr><td><code>3</code></td><td><span class="dot" style="background:#4ecb71"></span> 🏃 Health</td></tr>
+<tr><td><code>4</code></td><td><span class="dot" style="background:#7c6ff7"></span> 📚 Self Development</td></tr>
+<tr><td><code>5</code></td><td><span class="dot" style="background:#e07090"></span> 👨‍👩‍👧 Family</td></tr>
+<tr><td><code>6</code></td><td><span class="dot" style="background:#c090f0"></span> 🧘 Spirituality</td></tr>
+</table>
+
+<h3>Time Block Index Reference</h3>
+<table>
+<tr><th>Index</th><th>Time Block</th></tr>
+<tr><td><code>0</code></td><td>☀️ Morning Ritual (5:30 – 8:30 AM)</td></tr>
+<tr><td><code>1</code></td><td>⚡ Focus Block (8:30 AM – 12:30 PM)</td></tr>
+<tr><td><code>2</code></td><td>🌤️ Afternoon (12:30 – 6:00 PM)</td></tr>
+<tr><td><code>3</code></td><td>🌅 Evening (6:00 – 9:00 PM)</td></tr>
+<tr><td><code>4</code></td><td>🌙 Wind Down (9:00 – 11:00 PM)</td></tr>
+</table>
+
+<h3>Add a New Habit</h3>
+<pre>
+<span class="comment">// Add this line anywhere inside the habits array:</span>
+
+{ <span class="key">name</span>: <span class="string">"Cold shower"</span>, <span class="key">cat</span>: <span class="number">3</span>, <span class="key">time</span>: <span class="number">0</span>, <span class="key">est</span>: <span class="string">"5m"</span> },
+<span class="comment">//                       │       │        └─ estimated 5 minutes</span>
+<span class="comment">//                       │       └─ time block 0 = Morning Ritual</span>
+<span class="comment">//                       └─ category 3 = Health</span>
+</pre>
+
+<h3>Remove a Habit</h3>
+<p>Simply delete the entire line. Nothing else needs to change.</p>
+<pre>
+<span class="comment">// DELETE this line to remove the habit:</span>
+{ <span class="key">name</span>: <span class="string">"Cold shower"</span>, <span class="key">cat</span>: <span class="number">3</span>, <span class="key">time</span>: <span class="number">0</span>, <span class="key">est</span>: <span class="string">"5m"</span> },
+</pre>
+
+<div class="success">✅ <strong>No side effects.</strong> Removing a habit doesn't break anything. All views auto-update.</div>
+
+<h3>Edit a Habit</h3>
+<pre>
+<span class="comment">// BEFORE:</span>
+{ <span class="key">name</span>: <span class="string">"Read at least 5 pages"</span>, <span class="key">cat</span>: <span class="number">4</span>, <span class="key">time</span>: <span class="number">3</span>, <span class="key">est</span>: <span class="string">"15m"</span> },
+
+<span class="comment">// AFTER (changed name, moved to morning, increased time):</span>
+{ <span class="key">name</span>: <span class="string">"Read at least 20 pages"</span>, <span class="key">cat</span>: <span class="number">4</span>, <span class="key">time</span>: <span class="number">0</span>, <span class="key">est</span>: <span class="string">"30m"</span> },
+</pre>
+
+<h3>Move a Habit to a Different Time</h3>
+<pre>
+<span class="comment">// Move "Meditate" from Morning (0) to Evening (3):</span>
+
+<span class="comment">// BEFORE:</span>
+{ <span class="key">name</span>: <span class="string">"Meditate"</span>, <span class="key">cat</span>: <span class="number">3</span>, <span class="key">time</span>: <span class="number">0</span>, <span class="key">est</span>: <span class="string">"10m"</span> },
+
+<span class="comment">// AFTER:</span>
+{ <span class="key">name</span>: <span class="string">"Meditate"</span>, <span class="key">cat</span>: <span class="number">3</span>, <span class="key">time</span>: <span class="number">3</span>, <span class="key">est</span>: <span class="string">"10m"</span> },
+</pre>
+
+<!-- ============================================= -->
+<h2 id="weekly">7. Daily vs Weekly Habits</h2>
+<span class="badge badge-easy">EASY</span>
+
+<p>By default, every habit shows <strong>every day</strong>. To make a habit show <strong>only on your review day</strong> (default: Sunday), add <code>weekly: true</code>.</p>
+
+<h3>Make a Habit Weekly</h3>
+<pre>
+<span class="comment">// Daily habit (shows every day):</span>
+{ <span class="key">name</span>: <span class="string">"Exercise"</span>, <span class="key">cat</span>: <span class="number">3</span>, <span class="key">time</span>: <span class="number">0</span>, <span class="key">est</span>: <span class="string">"20m"</span> },
+
+<span class="comment">// Weekly habit (shows only on Sunday):</span>
+{ <span class="key">name</span>: <span class="string">"Review subscriptions"</span>, <span class="key">cat</span>: <span class="number">0</span>, <span class="key">time</span>: <span class="number">1</span>, <span class="key">est</span>: <span class="string">"10m"</span>, <span class="key">weekly</span>: <span class="number">true</span> },
+</pre>
+
+<h3>Change a Weekly Habit Back to Daily</h3>
+<pre>
+<span class="comment">// Remove the weekly: true part:</span>
+
+<span class="comment">// BEFORE (weekly):</span>
+{ <span class="key">name</span>: <span class="string">"Review subs"</span>, <span class="key">cat</span>: <span class="number">0</span>, <span class="key">time</span>: <span class="number">1</span>, <span class="key">est</span>: <span class="string">"10m"</span>, <span class="key">weekly</span>: <span class="number">true</span> },
+
+<span class="comment">// AFTER (daily):</span>
+{ <span class="key">name</span>: <span class="string">"Review subs"</span>, <span class="key">cat</span>: <span class="number">0</span>, <span class="key">time</span>: <span class="number">1</span>, <span class="key">est</span>: <span class="string">"10m"</span> },
+</pre>
+
+<h3>Change Which Day Weekly Habits Appear</h3>
+<pre>
+<span class="comment">// In the settings section at the top of data.js:</span>
+
+<span class="key">weeklyReviewDay</span>: <span class="number">0</span>,  <span class="comment">// 0=Sunday (default)</span>
+<span class="key">weeklyReviewDay</span>: <span class="number">6</span>,  <span class="comment">// 6=Saturday</span>
+<span class="key">weeklyReviewDay</span>: <span class="number">5</span>,  <span class="comment">// 5=Friday</span>
+</pre>
+
+<!-- ============================================= -->
+<h2 id="examples">8. Real Examples</h2>
+<span class="badge badge-medium">EXAMPLES</span>
+
+<h3>Example: Student Setup</h3>
+<pre>
+<span class="key">categories</span>: [
+  { <span class="key">name</span>: <span class="string">"Study"</span>,    <span class="key">color</span>: <span class="string">"#7c6ff7"</span>, <span class="key">icon</span>: <span class="string">"📖"</span> },
+  { <span class="key">name</span>: <span class="string">"Health"</span>,   <span class="key">color</span>: <span class="string">"#4ecb71"</span>, <span class="key">icon</span>: <span class="string">"💪"</span> },
+  { <span class="key">name</span>: <span class="string">"Social"</span>,   <span class="key">color</span>: <span class="string">"#4ea4cb"</span>, <span class="key">icon</span>: <span class="string">"👥"</span> },
+  { <span class="key">name</span>: <span class="string">"Personal"</span>, <span class="key">color</span>: <span class="string">"#f0a040"</span>, <span class="key">icon</span>: <span class="string">"✨"</span> },
+],
+
+<span class="key">habits</span>: [
+  { <span class="key">name</span>: <span class="string">"Attend all classes"</span>,  <span class="key">cat</span>: <span class="number">0</span>, <span class="key">time</span>: <span class="number">1</span>, <span class="key">est</span>: <span class="string">"—"</span> },
+  { <span class="key">name</span>: <span class="string">"Study 2 hours"</span>,       <span class="key">cat</span>: <span class="number">0</span>, <span class="key">time</span>: <span class="number">2</span>, <span class="key">est</span>: <span class="string">"2h"</span> },
+  { <span class="key">name</span>: <span class="string">"Review notes"</span>,        <span class="key">cat</span>: <span class="number">0</span>, <span class="key">time</span>: <span class="number">3</span>, <span class="key">est</span>: <span class="string">"30m"</span> },
+  { <span class="key">name</span>: <span class="string">"Gym"</span>,                 <span class="key">cat</span>: <span class="number">1</span>, <span class="key">time</span>: <span class="number">0</span>, <span class="key">est</span>: <span class="string">"45m"</span> },
+  { <span class="key">name</span>: <span class="string">"8 hours sleep"</span>,       <span class="key">cat</span>: <span class="number">1</span>, <span class="key">time</span>: <span class="number">4</span>, <span class="key">est</span>: <span class="string">"—"</span> },
+  { <span class="key">name</span>: <span class="string">"Call family"</span>,         <span class="key">cat</span>: <span class="number">2</span>, <span class="key">time</span>: <span class="number">3</span>, <span class="key">est</span>: <span class="string">"15m"</span> },
+  { <span class="key">name</span>: <span class="string">"Journal"</span>,             <span class="key">cat</span>: <span class="number">3</span>, <span class="key">time</span>: <span class="number">4</span>, <span class="key">est</span>: <span class="string">"10m"</span> },
+  { <span class="key">name</span>: <span class="string">"Weekly meal prep"</span>,    <span class="key">cat</span>: <span class="number">1</span>, <span class="key">time</span>: <span class="number">2</span>, <span class="key">est</span>: <span class="string">"1h"</span>, <span class="key">weekly</span>: <span class="number">true</span> },
+]
+</pre>
+
+<h3>Example: Fitness Focused</h3>
+<pre>
+<span class="key">categories</span>: [
+  { <span class="key">name</span>: <span class="string">"Training"</span>,  <span class="key">color</span>: <span class="string">"#f05050"</span>, <span class="key">icon</span>: <span class="string">"🏋️"</span> },
+  { <span class="key">name</span>: <span class="string">"Nutrition"</span>, <span class="key">color</span>: <span class="string">"#4ecb71"</span>, <span class="key">icon</span>: <span class="string">"🥗"</span> },
+  { <span class="key">name</span>: <span class="string">"Recovery"</span>,  <span class="key">color</span>: <span class="string">"#4ea4cb"</span>, <span class="key">icon</span>: <span class="string">"💤"</span> },
+  { <span class="key">name</span>: <span class="string">"Mindset"</span>,   <span class="key">color</span>: <span class="string">"#f0a040"</span>, <span class="key">icon</span>: <span class="string">"🧠"</span> },
+],
+
+<span class="key">habits</span>: [
+  { <span class="key">name</span>: <span class="string">"Morning run 5K"</span>,      <span class="key">cat</span>: <span class="number">0</span>, <span class="key">time</span>: <span class="number">0</span>, <span class="key">est</span>: <span class="string">"30m"</span> },
+  { <span class="key">name</span>: <span class="string">"Weight training"</span>,      <span class="key">cat</span>: <span class="number">0</span>, <span class="key">time</span>: <span class="number">2</span>, <span class="key">est</span>: <span class="string">"1h"</span> },
+  { <span class="key">name</span>: <span class="string">"10K steps"</span>,            <span class="key">cat</span>: <span class="number">0</span>, <span class="key">time</span>: <span class="number">3</span>, <span class="key">est</span>: <span class="string">"—"</span> },
+  { <span class="key">name</span>: <span class="string">"Hit protein goal 150g"</span>, <span class="key">cat</span>: <span class="number">1</span>, <span class="key">time</span>: <span class="number">2</span>, <span class="key">est</span>: <span class="string">"—"</span> },
+  { <span class="key">name</span>: <span class="string">"Drink 3L water"</span>,       <span class="key">cat</span>: <span class="number">1</span>, <span class="key">time</span>: <span class="number">2</span>, <span class="key">est</span>: <span class="string">"—"</span> },
+  { <span class="key">name</span>: <span class="string">"No sugar"</span>,             <span class="key">cat</span>: <span class="number">1</span>, <span class="key">time</span>: <span class="number">2</span>, <span class="key">est</span>: <span class="string">"—"</span> },
+  { <span class="key">name</span>: <span class="string">"Stretch 15 min"</span>,       <span class="key">cat</span>: <span class="number">2</span>, <span class="key">time</span>: <span class="number">4</span>, <span class="key">est</span>: <span class="string">"15m"</span> },
+  { <span class="key">name</span>: <span class="string">"Sleep 8 hours"</span>,        <span class="key">cat</span>: <span class="number">2</span>, <span class="key">time</span>: <span class="number">4</span>, <span class="key">est</span>: <span class="string">"—"</span> },
+  { <span class="key">name</span>: <span class="string">"Visualize goals"</span>,      <span class="key">cat</span>: <span class="number">3</span>, <span class="key">time</span>: <span class="number">0</span>, <span class="key">est</span>: <span class="string">"5m"</span> },
+  { <span class="key">name</span>: <span class="string">"Weigh in"</span>,             <span class="key">cat</span>: <span class="number">2</span>, <span class="key">time</span>: <span class="number">0</span>, <span class="key">est</span>: <span class="string">"2m"</span>, <span class="key">weekly</span>: <span class="number">true</span> },
+]
+</pre>
+
+<!-- ============================================= -->
+<h2 id="backup">9. Backup & Restore Data</h2>
+<span class="badge badge-medium">MEDIUM</span>
+
+<p>Your check-in data is saved in <strong>localStorage</strong> (your browser). It stays unless you clear browser data. Here's how to backup and restore:</p>
+
+<h3>Export (Backup)</h3>
+<p>Open your browser console (<code>F12</code> → Console tab) and paste:</p>
+<pre>
+<span class="keyword">const</span> backup = JSON.stringify(localStorage);
+console.log(backup);
+<span class="comment">// Copy the output and save it in a text file</span>
+</pre>
+
+<h3>Import (Restore)</h3>
+<p>Paste this in the console, replacing <code>YOUR_BACKUP</code> with your saved data:</p>
+<pre>
+<span class="keyword">const</span> data = JSON.parse(<span class="string">'YOUR_BACKUP_STRING_HERE'</span>);
+Object.entries(data).forEach(([k, v]) => localStorage.setItem(k, v));
+location.reload();
+</pre>
+
+<h3>Clear All Data (Start Fresh)</h3>
+<pre>
+localStorage.clear();
+location.reload();
+</pre>
+
+<div class="warn">⚠️ <strong>Warning:</strong> <code>localStorage.clear()</code> deletes ALL your check-in history permanently.</div>
+
+<!-- ============================================= -->
+<h2 id="deploy">10. Deploy to GitHub Pages</h2>
+<span class="badge badge-medium">MEDIUM</span>
+
+<h3>Step 1: Create a GitHub Repository</h3>
+<p>Go to <a href="https://github.com/new" target="_blank">github.com/new</a> and create a repo called <code>life-tracker</code>.</p>
+
+<h3>Step 2: Upload Files</h3>
+<p>Upload all files: <code>index.html</code>, <code>style.css</code>, <code>app.js</code>, <code>data.js</code>, <code>README.md</code>, <code>guide.html</code></p>
+
+<h3>Step 3: Enable GitHub Pages</h3>
+<p>Go to your repo → <strong>Settings</strong> → <strong>Pages</strong> → Source: <strong>Deploy from branch</strong> → Branch: <strong>main</strong> → Folder: <strong>/ (root)</strong> → <strong>Save</strong></p>
+
+<h3>Step 4: Access Your Tracker</h3>
+<pre>
+https://YOUR-USERNAME.github.io/life-tracker/
+</pre>
+
+<div class="success">✅ <strong>Done!</strong> Your tracker is now live. Share the link with anyone.</div>
+
+<div class="tip">💡 <strong>Note:</strong> Each person's data is stored in THEIR browser. Different devices = separate data. Your habits are private.</div>
+
+<!-- ============================================= -->
+<h2 id="troubleshoot">11. Troubleshooting</h2>
+
+<h3>Nothing shows up / blank page</h3>
+<div class="card">
+<p>✅ Make sure all 4 files are in the same folder<br>
+✅ Make sure file names are exactly: <code>index.html</code>, <code>style.css</code>, <code>app.js</code>, <code>data.js</code><br>
+✅ Open <code>index.html</code> in Chrome or Firefox<br>
+✅ Press <code>F12</code> → Console tab → check for red errors</p>
+</div>
+
+<h3>Habits not showing</h3>
+<div class="card">
+<p>✅ Check <code>cat</code> number matches a valid category index<br>
+✅ Check <code>time</code> number matches a valid time block index<br>
+✅ If it's a <code>weekly: true</code> habit, it only shows on your review day<br>
+✅ Make sure each habit line ends with a comma</p>
+</div>
+
+<h3>Syntax error in data.js</h3>
+<div class="card">
+<p>Common mistakes:</p>
+<pre>
+<span class="comment">// ❌ WRONG — missing comma after line</span>
+{ <span class="key">name</span>: <span class="string">"Exercise"</span>, <span class="key">cat</span>: <span class="number">3</span>, <span class="key">time</span>: <span class="number">0</span>, <span class="key">est</span>: <span class="string">"20m"</span> }
+{ <span class="key">name</span>: <span class="string">"Meditate"</span>, <span class="key">cat</span>: <span class="number">3</span>, <span class="key">time</span>: <span class="number">0</span>, <span class="key">est</span>: <span class="string">"10m"</span> }
+
+<span class="comment">// ✅ CORRECT — comma after each line</span>
+{ <span class="key">name</span>: <span class="string">"Exercise"</span>, <span class="key">cat</span>: <span class="number">3</span>, <span class="key">time</span>: <span class="number">0</span>, <span class="key">est</span>: <span class="string">"20m"</span> },
+{ <span class="key">name</span>: <span class="string">"Meditate"</span>, <span class="key">cat</span>: <span class="number">3</span>, <span class="key">time</span>: <span class="number">0</span>, <span class="key">est</span>: <span class="string">"10m"</span> },
+</pre>
+<pre>
+<span class="comment">// ❌ WRONG — using wrong quotes (curly/smart quotes)</span>
+{ <span class="key">name</span>: <span class="string">"Exercise"</span> }
+
+<span class="comment">// ✅ CORRECT — use straight quotes</span>
+{ <span class="key">name</span>: <span class="string">"Exercise"</span> }
+</pre>
+</div>
+
+<h3>Data disappeared</h3>
+<div class="card">
+<p>✅ Did you clear browser data / cookies? That deletes localStorage<br>
+✅ Are you on the same browser? Data doesn't sync across browsers<br>
+✅ Incognito mode? Data is lost when you close the window<br>
+✅ Set up regular backups using the export method above</p>
+</div>
+
+<h3>Need more help?</h3>
+<div class="card">
+<p>Open an issue on the GitHub repo with:<br>
+1. What you tried<br>
+2. What happened<br>
+3. Screenshot of browser console errors (F12 → Console)</p>
+</div>
+
+<div style="text-align:center;margin:40px 0;color:#555;font-size:12px">
+  Built with focus, discipline, and zero dependencies. 🎯<br>
+  <a href="index.html">← Back to Life Tracker</a>
+</div>
+
+</div>
+</body>
+</html>
